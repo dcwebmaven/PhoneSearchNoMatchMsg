@@ -1,0 +1,73 @@
+<html>
+
+<head>
+<script type="text/javascript">
+
+function createRequestObject() {
+
+  var ro
+  var browser = navigator.appName
+  if(browser == "Microsoft Internet Explorer"){
+       ro = new ActiveXObject("Microsoft.XMLHTTP")
+  } else {
+       ro = new XMLHttpRequest()
+  }
+  return ro
+
+}
+
+var http = createRequestObject()
+
+function sndReq(action) {
+
+    http.open('get', 'cgi/ajaxphone.pl?firstname='+action, true)
+    http.onreadystatechange = handleResponse
+    http.send(null)
+
+}
+
+function handleResponse() {
+
+     var found = 0
+
+    if(http.readyState == 4){
+
+         var response = http.responseText;
+         var update = new Array()
+
+         if(response.indexOf('|')) {
+            update = response.split('|')
+
+            document.getElementById('theName').innerHTML = document.getElementById('first').value
+            document.getElementById('address').innerHTML = update[0]
+            document.getElementById('phone').innerHTML = update[1]
+            document.getElementById('email').innerHTML = update[2]
+            document.getElementById('picture').innerHTML = "<img src=" + update[3] + ">"
+
+               found = 1
+
+           }
+if (!found) {
+       alert("There were no matches.")
+       }
+    }
+
+}
+
+</script>
+</head>
+<body>
+<form id="search">
+<input type = "text" id="first"/>
+<input type="button" value="Search Phonebook"
+    onClick="sndReq(document.getElementById('first').value)" />
+
+</form>
+<div id="theName"></div>
+<div id="address"></div>
+<div id="phone"></div>
+<div id="email"></div>
+<div id="picture"></div>
+</body>
+
+</html>
